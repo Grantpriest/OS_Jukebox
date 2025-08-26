@@ -7,6 +7,8 @@ import "swiper/css/effect-coverflow";
 import "./App.css";
 import albums from "./albums.json";
 
+console.log("Album count:", albums.length);
+
 function App() {
   const audioRef = useRef(null);
   const swiperRef = useRef(null);
@@ -57,7 +59,7 @@ const handleClick = (index, album) => {
   audioRef.current.currentTime = 0;            // ⬅ reset playback position
   setIsPlaying(true);
   setCurrentTrack(index);
-  audioRef.current.src = `/audio/${album.filename}`;
+  audioRef.current.src = `${import.meta.env.BASE_URL}audio/${album.filename}`;
   audioRef.current.play();                     // ⬅ start new track
 };
 
@@ -76,6 +78,7 @@ const handleClick = (index, album) => {
             delay: 0,
             disableOnInteraction: false,
           }}
+          loopedSlides={albums.length}
           coverflowEffect={{
             rotate: 30,
             stretch: 0,
@@ -88,31 +91,35 @@ const handleClick = (index, album) => {
           className="swiper-container"
         >
           {albums.map((album, index) => (
-            <SwiperSlide key={index}>
-              <div className="album-slide">
-                <img
-                  src={`/images/${album.image}`}
-                  alt={album.title}
-                  onClick={() => handleClick(index, album)}
-                />
-              </div>
-            </SwiperSlide>
-          ))}
+  <SwiperSlide key={index}>
+    <div className={`album-slide ${currentTrack === index ? "selected" : ""}`}>
+      <img
+                  src={`${import.meta.env.BASE_URL}images/${album.image}`}
+        alt={album.title}
+        onClick={() => handleClick(index, album)}
+      />
+    </div>
+  </SwiperSlide>
+))}
+
         </Swiper>
       </div>
 
       <div className="track-info-container">
         {currentTrack !== null && (
           <>
+
+            
             <div className="track-title">{albums[currentTrack].title}</div>
+            <div className="track-album">{albums[currentTrack].album}</div>
             <div className="track-artist">{albums[currentTrack].artist}</div>
-            <div className="track-timer">
+                      <div className="track-timer">
               <span className="timer">{currentTime}</span>
               <div className="track-progress">
                 <div className="progress-bar" style={{ width: progress + "%" }}></div>
               </div>
               <span className="timer">{duration}</span>
-            </div>
+          </div>
           </>
         )}
       </div>
